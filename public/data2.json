@@ -1,0 +1,27 @@
+{
+  "totalEmissions": {
+    "value": 240,
+    "unit": "units"
+  },
+  "categories": [
+    { "name": "Transport", "value": 80, "color": "#C5B4E3" },
+    { "name": "Digital", "value": 54, "color": "#E3C5D9" },
+    { "name": "Waste", "value": 32, "color": "#C5E3E3" },
+    { "name": "Others", "value": 16, "color": "#E3D5C5" }
+  ],
+  "purchasedEnergy": {
+    "Transport": 112,
+    "Digital": 82,
+    "Waste": 23
+  },
+  "footprintOverTime": {
+    "labels": [2005, 2015, 2020],
+    "values": {
+      "Europe": [3, 12, 82],
+      "USA": [5, 15, 70],
+      "India": [2, 8, 50],
+      "UN": [4, 10, 60]
+    }
+  },
+  "emissionPercentage": 76
+}
