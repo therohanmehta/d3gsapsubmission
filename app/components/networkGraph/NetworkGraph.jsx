@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 import { gsap } from "gsap"; // Import GSAP
-
+import json from "@/public/data.json";
 const NetworkGraph = ({ data }) => {
   const svgRef = useRef();
   const [wiggle, setWiggle] = useState(false); // State to control the wiggle animation
@@ -110,103 +110,67 @@ const NetworkGraph = ({ data }) => {
     };
   }, []); // Add wiggle state as a dependency
 
+
+
   const handleWig = () => {
-    // Select all circles in the SVG
-    const circles = Array.from(svgRef.current.querySelectorAll("circle")); // Convert NodeList to Array
-    const lines = svgRef.current.querySelectorAll("line");
-    console.log(circles[0].__data__);
+    // Group data by color
+    const groupedData = d3.group(json.nodes, (d) => d.color);
 
-    const filterdCircles = circles.filter((circle) => circle.__data__.color == "#D6D7E1");
+    // Set dimensions
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-    gsap.to(lines, {
-      opacity: 0,
-      duration: 0.2,
-    });
+    // Create an SVG element
+    const svg = d3.select(svgRef.current).attr("width", width).attr("height", height).style("background", "#f4f4f4").style("overflow", "visible");
 
-    gsap.to(filterdCircles, {
-      attr: {
-        fill: "#D7EEF3",
-        r: 50,
-        cx: 100,
-        cy: 400,
-      },
-      duration: 2,
-    });
+    // Create a scale for the bubbles' radius
+    const radiusScale = d3.scaleSqrt().domain([0, 100]).range([10, 50]);
 
-    // Create an object to store the count of each color (excluding #D6D7E1)
-    const colorCounts = {};
-
-    // Loop through all circles
-    circles.forEach((circle) => {
-      // Get the color of each circle (assuming it's stored as a 'color' attribute or in styles)
-      const color = circle.getAttribute("fill");
-
-      // Skip the color we don't want to filter
-      if (color !== "#D6D7E1") {
-        if (colorCounts[color]) {
-          colorCounts[color]++;
-        } else {
-          colorCounts[color] = 1;
-        }
-      }
-    });
-
-    // Now `colorCounts` holds the count of each color
-    console.log(colorCounts);
-
-    // Convert the colorCounts object to an array for the bar graph
-    const barData = Object.entries(colorCounts).map(([color, count]) => ({
+    // Define starting positions for each group
+    const groupCenters = Array.from(groupedData.keys()).map((color, index) => ({
       color,
-      count,
+      x: (index + 1) * (width / (groupedData.size + 7)),
+      y: height / 2,
     }));
 
-    // You can use D3 to create the bar graph with `barData`
-    setTimeout(() => {
-      createBarGraph(barData);
-    }, 2000);
-  };
+    console.log(groupCenters);
 
-  // Function to generate the bar graph using D3.js
-  const createBarGraph = (data) => {
-    const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-    const width = 1000 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    // Create a simulation for positioning bubbles
+    const simulation = d3
+      .forceSimulation(json.nodes)
+      .force("x", d3.forceX((d) => groupCenters.find((g) => g.color === d.color).x).strength(0.2))
+      .force("y", d3.forceY((d) => groupCenters.find((g) => g.color === d.color).y).strength(0.2))
+      .force(
+        "collide",
+        d3.forceCollide((d) => radiusScale(d.size === "large" ? 10 : d.size === "medium" ? 6 : 4) + 2) // Ensures no overlap
+      )
+      .on("tick", () => {
+        svg
+          .selectAll("circle")
+          .data(json.nodes)
+          .join("circle")
+          .attr("cx", (d) => d.x)
+          .attr("cy", (d) => d.y)
+          .attr("r", (d) => radiusScale(d.size === "large" ? 10 : d.size === "medium" ? 6 : 4))
+          .attr("fill", (d) => d.color);
 
-    const svg = d3
-      .select(svgRef.current)
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+        svg
+          .selectAll("text")
+          .data(json.nodes)
+          .join("text")
+          .attr("x", (d) => d.x)
+          .attr("y", (d) => d.y)
+          .attr("text-anchor", "middle")
+          .attr("dy", ".3em")
+          .text((d) => d.name)
+          .style("font-size", "12px")
+          .style("fill", "#fff");
+      });
 
-    const x = d3
-      .scaleBand()
-      .domain(data.map((d) => d.color))
-      .range([0, width])
-      .padding(0.1);
-
-    const y = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.count)])
-      .nice()
-      .range([height, 0]);
-
-    svg
-      .selectAll(".bar")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("class", "bar")
-      .attr("x", (d) => x(d.color))
-      .attr("y", (d) => y(d.count))
-      .attr("width", x.bandwidth())
-      .attr("height", (d) => height - y(d.count))
-      .attr("fill", (d) => d.color);
-
-    // svg.append("g").attr("class", "x axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-
-    // svg.append("g").attr("class", "y axis").call(d3.axisLeft(y));
+    // Cleanup on component unmount
+    return () => {
+      simulation.stop();
+    };
   };
 
   return (

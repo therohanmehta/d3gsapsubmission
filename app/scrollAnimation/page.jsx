@@ -40,12 +40,54 @@ function ScrollAnimation() {
         <div className="w-[70%]">
           <h3 className={`${styles.combined} text-center`}>Sustainable goals together</h3>
         </div>
-        <Image id="image1" src={"/Card 1.png"} height={500} width={500} alt="image1" className="absolute top-[10%] left-[10%] scroll-image" />
-        <Image id="image2" src={"/Card 2.png"} height={500} width={500} alt="image1" className="absolute top-[10%] right-[10%] scroll-image" />
-        <Image id="image3" src={"/Card 1.png"} height={500} width={500} alt="image1" className="absolute top-[40%] left-[15%] scroll-image" />
-        <Image id="image4" src={"/Card 2.png"} height={500} width={500} alt="image1" className="absolute top-[40%] right-[15%] scroll-image" />
-        <Image id="image5" src={"/Card 1.png"} height={500} width={500} alt="image1" className="absolute bottom-[10%] left-[10%] scroll-image" />
-        <Image id="image6" src={"/Card 2.png"} height={500} width={500} alt="image1" className="absolute bottom-[10%] right-[10%] scroll-image" />
+        <Image
+          id="image1"
+          src={"/Card 1.png"}
+          height={500}
+          width={500}
+          alt="image1"
+          className="absolute top-[10%] left-[10%] w-[25vw] h-auto scroll-image"
+        />
+        <Image
+          id="image2"
+          src={"/Card 2.png"}
+          height={500}
+          width={500}
+          alt="image1"
+          className="absolute top-[10%]  w-[25vw] h-auto right-[10%] scroll-image"
+        />
+        <Image
+          id="image3"
+          src={"/Card 1.png"}
+          height={500}
+          width={500}
+          alt="image1"
+          className="absolute top-[40%] left-[15%] w-[25vw] h-auto scroll-image"
+        />
+        <Image
+          id="image4"
+          src={"/Card 2.png"}
+          height={500}
+          width={500}
+          alt="image1"
+          className="absolute top-[40%] right-[15%] w-[25vw] h-auto scroll-image"
+        />
+        <Image
+          id="image5"
+          src={"/Card 1.png"}
+          height={500}
+          width={500}
+          alt="image1"
+          className="absolute bottom-[10%] left-[10%] w-[25vw] h-auto scroll-image"
+        />
+        <Image
+          id="image6"
+          src={"/Card 2.png"}
+          height={500}
+          width={500}
+          alt="image1"
+          className="absolute bottom-[10%] right-[10%] w-[25vw] h-auto scroll-image"
+        />
       </div>
       <div className="h-screen"></div>
     </>
