@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import styles from "./scrollAnimation.module.css";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -89,7 +90,11 @@ function ScrollAnimation() {
           className="absolute bottom-[10%] right-[10%] w-[25vw] h-auto scroll-image"
         />
       </div>
-      <div className="h-screen"></div>
+      <div className="h-screen flex items-center justify-center">
+        <button className="px-2 py-3 border bg-blue-300 px-5 py-4 rounded-lg">
+          <Link href="/network">Go to Network Graph</Link>
+        </button>
+      </div>
     </>
   );
 }
